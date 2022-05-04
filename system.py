@@ -1,6 +1,4 @@
-# teste remote git
 # Importação do módulo *os* para manipulação de arquivos.
-from math import prod
 import os
 
 # Criação de uma matriz 3/7 para o armazenamento dos códigos, produtos e preços.
@@ -11,12 +9,12 @@ menu = [
     [10.00, 10.00, 7.50, 8.00, 5.50, 4.50, 6.25]
 ]
 
-# Função responsável por verificar se já existe um pedido no CPF cadastrado.
+# Função responsável por verificar se já existe um pedido no CPF informado.
 def checkOrderExist(cpf):
     try:
-        file = open('./orders/order_id%d.txt' % cpf, 'r', encoding='utf-8')
+        file = open('./customer/user%d.txt' % cpf, 'r', encoding='utf-8')
         if file:
-            order = file.read().replace('\n', '').split(';')
+            order = file.read().split(';')
             if int(order[1]) == cpf:
                 file.close()
                 return True
@@ -26,10 +24,10 @@ def checkOrderExist(cpf):
 
 
 # Função responsável por criar um novo pedido.
-def createNewOrder(name, cpf, pwd, addOtherProd):
+def createNewOrder(name, cpf, pwd, newProduct):
     checkOrder = False
-    if not addOtherProd:
-        checkOrder = checkOrderExist(cpf = 0)
+    if not newProduct:
+        checkOrder = checkOrderExist(cpf)
 
     if checkOrder:
         print()
@@ -37,11 +35,11 @@ def createNewOrder(name, cpf, pwd, addOtherProd):
         print()
         return False
     else:
-        if not addOtherProd:
-            orderFile = open('./orders/order_id%d.txt' % cpf, 'w', encoding='utf-8')
-            orderFile.write('%s;%d;%s;\n' % (name, cpf, pwd))
-            orderFile.close()
-
+        if not newProduct:
+            register_client = open('./customer/user%d.txt' % cpf, 'w', encoding='utf-8')
+            register_client.write('%s;%d;%s' % (name, cpf, pwd))
+            register_client.close()
+            
         print("{:20}".format("Código"), end=" ")
         print("{:20}".format("Produto"), end=" ")
         print("{:20}".format("Preço"), end=" ")
@@ -55,19 +53,19 @@ def createNewOrder(name, cpf, pwd, addOtherProd):
         code = int(input('Digite o código do produto escolhido: '))
         quantity = int(input('Quantidade: '))
         print()
-        orderFile = open('./orders/order_id%d.txt' % cpf, 'a', encoding='utf-8')
-        orderFile.write('{0};{1};{2};{3}\n'.format(code, quantity, menu[1][code-1], menu[2][code-1]))
-        orderFile.close()
+        order = open('./orders/order_id%d.txt' % cpf, 'a', encoding='utf-8')
+        order.write('{0};{1};{2};{3}\n'.format(code, quantity, menu[1][code-1], menu[2][code-1]))
+        order.close()
         return True
 # Fim da função criar pedido.
 
 # Função responsável por validar CPF e Senha
 def verifyCustomerData(cpf, pwd):
     try:
-        file = open('./orders/order_id%d.txt' % cpf, 'r', encoding='utf-8')
+        file = open('./customer/user%d.txt' % cpf, 'r', encoding='utf-8')
         if file:
-            order = file.read().replace('\n', '').split(';')
-            if int(order[1]) == cpf and order[2] == pwd:
+            data = file.read().split(';')
+            if int(data[1]) == cpf and data[2] == pwd:
                 file.close()
                 return True
     except:
@@ -118,6 +116,7 @@ Opção desejada: '''))
 
     # Inicio das estruturas condicionais para validação e efetivação das opções.
     if option == 1:
+        # Opção 01 para criação do pedido
         print()
         print('---- Criar conta ----')
         print()
@@ -126,6 +125,7 @@ Opção desejada: '''))
         cpf = int(input('CPF (apenas números): '))
         password = input('Senha: ')
         print()
+        # o 4° parametro da função "createNewOrder" indica a inserção de mais um produto no pedido
         confirmation = createNewOrder(name, cpf, password, False)
 
         if confirmation:
@@ -137,6 +137,7 @@ Opção desejada: '''))
                 createNewOrder('', cpf, '', True)
 
     elif option == 2:
+        # Opção 02 para o cancelamento do pedido
         print()
         print('---- Cancelar pedido ----')
         print()
@@ -147,6 +148,7 @@ Opção desejada: '''))
 
         if response:
             os.remove('./orders/order_id%d.txt' % cpf)
+            os.remove('./customer/user%d.txt' % cpf)
             print('Pedido cancelado com sucesso!')
             print()
         else:

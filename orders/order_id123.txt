@@ -1,0 +1,3 @@
+0;0;Suco natural;6.25
+1;8;X-salada;10.0
+7;1;Suco natural;6.25
