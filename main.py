@@ -44,7 +44,9 @@ Opção desejada: '''))
                 print()
                 otherProduct = input('Deseje adicionar outro produto? (s/n): ')
                 if otherProduct == 's':
-                    createNewOrder('', cpf, '', True)
+                    response = createNewOrder('', cpf, '', True)
+                    if response:
+                        print('O produto inserido no pedido.')
 
         elif option == 2:
             # Opção 02 para o cancelamento do pedido.
@@ -128,7 +130,7 @@ Opção desejada: '''))
 
             if validation:
                 response = valueToPay(cpf)
-                if response:
+                if response or response == 0:
                     print()
                     print('Valor total: R$ {0}'.format(response))
                     print()
