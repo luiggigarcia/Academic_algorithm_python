@@ -1,5 +1,6 @@
 # Importação do módulo "os" para manipulação de arquivos.
 import os
+import datetime
 
 # Criação de uma matriz 3 linhas / 7 colunas para o armazenamento dos códigos, produtos e preços.
 menu = [
@@ -77,7 +78,8 @@ def verifyCustomerData(cpf, pwd):
 
 # Função responsável por inserir um produto no pedido do cliente.
 def insertProdIntoOrder(cpf):
-    return createNewOrder('', cpf, '', True)
+    createNewOrder('', cpf, '', True)
+    return True
 # Fim da função inserir produto
 
 # Função responsável por cancelar um produto no pedido do cliente
@@ -88,21 +90,20 @@ def cancelProduct(code, quant, cpf):
     products = []
     for prod in data:
         products.append(prod.replace('\n','').split(';'))
-    
+   
     prodQuant = 0
     for prod in products:
-        if code == int(prod[0]):
+        if code == int(prod[0]) and 'cancelado' not in prod:
             prodQuant += 1
 
     if quant <= prodQuant:
         if quant == 1:
             quant += 1
-        for prod in products:
-            for i in range(quant-1):
-                if int(prod[0]) == code:
+        for i in range(quant-1):
+            for prod in products:
+                if int(prod[0]) == code and 'cancelado' not in prod:
                     prod.append('cancelado')
-            if i == quant-2:
-                break
+       
         file = open('./orders/order_id%d.txt' % (cpf), 'w', encoding='utf-8')
         for i in range(len(products)):
                 if i == len(products)-1:
@@ -128,10 +129,47 @@ def valueToPay(cpf):
 
     total = 0
     for prod in products:
-        total += float(prod[3])
+        if 'cancelado' not in prod:
+            total += float(prod[3])
     return total
 
 # Fim da função valor total.
+
+# Função responsável por gerar o extrato do pedido.
+# Inclui o histórico de todas as operações realizadas.
+def getOrderStatement(cpf):
+    file = open('./customer/user{0}.txt'.format(cpf), 'r', encoding='utf-8')
+    data = file.read().split(';')
+    file.close()
+    statement = '''Nome: {0}
+CPF: {1}
+Total: R$ {2}
+Data: {3}
+Itens do pedido: \n'''.format(data[0], data[1], valueToPay(cpf), datetime.datetime.now())
+
+    file = open('./orders/order_id%d.txt' % cpf, 'r', encoding='utf-8')
+    data = file.readlines()
+    file.close()
+    products = []
+    for prod in data:
+        products.append(prod.replace('\n','').split(';'))
+    
+    items = []
+    for prod in products:
+        if 'cancelado' in prod:
+            items.append([ prod[1], prod[2], prod[3], (float(prod[3])*int(prod[1])), prod[4] ])
+        else:
+            items.append([ prod[1], prod[2], prod[3], (float(prod[3])*int(prod[1])) ])
+
+    for item in items:
+        if 'cancelado' in item:
+            statement += '{:2}  -  {:20} - Preço unitário:  {:20}   Valor:  - {:5} - {:5}\n'.format(item[0], item[1], item[2], item[3], item[4].capitalize())
+        else:
+            statement += '{:2}  -  {:20} - Preço unitário:  {:20}   Valor:  + {:5}\n'.format(item[0], item[1], item[2], item[3])
+
+    return statement
+
+# Fim da função extrato do pedido.
 
 print()
 
@@ -264,8 +302,8 @@ Opção desejada: '''))
             print('CPF ou Senha inválidos.')
             print()
 
-    elif option == 5:
-        # Opção 05 para obter o extrato do pedido.
+    elif option == 6:
+        # Opção 06 para obter o extrato do pedido.
         print()
         print('---- Extrato do pedido ----')
         print()
@@ -276,10 +314,10 @@ Opção desejada: '''))
         validation = verifyCustomerData(cpf, password)
 
         if validation:
-            response = 0
+            response = getOrderStatement(cpf)
             if response:
                 print()
-                print('')
+                print(response)
                 print()
         else:
             print()
