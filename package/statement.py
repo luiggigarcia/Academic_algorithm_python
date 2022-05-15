@@ -14,7 +14,7 @@ def valueToPay(cpf):
     total = 0
     for prod in products:
         if 'cancelado' not in prod:
-            total += float(prod[3])
+            total += float(prod[3]) * int(prod[1])
     return total
 # Fim da função valor total.
 

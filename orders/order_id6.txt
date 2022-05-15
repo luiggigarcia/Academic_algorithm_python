@@ -1,0 +1,6 @@
+1;1;X-salada;10.0;cancelado
+1;1;X-salada;10.0
+3;6;Cachorro quente;7.5;cancelado
+3;1;Cachorro quente;7.5;cancelado
+6;1;Refrigerante;4.5;cancelado
+6;1;Refrigerante;4.5

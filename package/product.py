@@ -11,7 +11,9 @@ def createNewOrder(name, cpf, pwd, newProduct):
          "Suco natural"],
         [10.00, 10.00, 7.50, 8.00, 5.50, 4.50, 6.25]
 ]
+    # A variável 'checkOrder' indica se já existe um pedido no CPF informado.
     checkOrder = False
+    # O parâmetro 'newProduct' indica se cliente deseja inserir um produto em seu pedido.
     if not newProduct:
         checkOrder = checkOrderExist(cpf)
 
@@ -37,10 +39,14 @@ def createNewOrder(name, cpf, pwd, newProduct):
                 print("{:20}".format(str(menu[line][column])), end=" ")
             print()
         print()
+        
         code = int(input('Digite o código do produto escolhido: '))
         quantity = int(input('Quantidade: '))
+        
         print()
+        
         order = open('./orders/order_id%d.txt' % cpf, 'a', encoding='utf-8')
+        
         if newProduct:
             order.write('\n{0};{1};{2};{3}'.format(code, quantity, menu[1][code-1], menu[2][code-1]))
         else:
@@ -65,21 +71,23 @@ def cancelProduct(code, quant, cpf):
     for prod in data:
         products.append(prod.replace('\n','').split(';'))
    
+    # A variável 'prodQuant' armazena a quantidade existente de produtos no pedido.
     prodQuant = 0
     for prod in products:
         if code == int(prod[0]) and 'cancelado' not in prod:
             prodQuant += 1
 
     if quant <= prodQuant:
-        if quant == 1:
-            quant += 1
-        for i in range(quant-1):
+        for i in range(quant):
             for prod in products:
                 if int(prod[0]) == code and 'cancelado' not in prod:
                     prod.append('cancelado')
+                    break
        
         file = open('./orders/order_id%d.txt' % (cpf), 'w', encoding='utf-8')
         for i in range(len(products)):
+                # Essa condição avalia se é o ultimo produto a ser escrito no arquivo,
+                # Assim, não é colocado uma quebra de linha.
                 if i == len(products)-1:
                     file.write(';'.join(products[i]))
                 else:

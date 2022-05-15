@@ -1,12 +1,14 @@
-# Importação dos módulos de produto, autenticação e extrato do pedido.
+# Importação dos módulos que contém as função relacionadas a produto, autenticação e extrato do pedido.
 from package.product import createNewOrder, cancelProduct, insertProdIntoOrder
 from package.auth import verifyCustomerData
 from package.statement import valueToPay, getOrderStatement
+
 # Importação do módulo "os" para manipulação de arquivos.
 import os
 
 print()
 
+# Verificação do módulo principal para iniciar a main.
 if __name__ == '__main__':
     #Estrutura de repetição recursiva para a apresentação do menu de opções.
     while True:
@@ -28,7 +30,7 @@ Opção desejada: '''))
         if option == 1:
             # Opção 01 para criação do pedido
             print()
-            print('---- Criar conta ----')
+            print('---- Criar conta -> Novo Pedido ----')
             print()
 
             name = input('Nome: ')
@@ -42,11 +44,11 @@ Opção desejada: '''))
                 print()
                 print('Pedido criado com sucesso!')
                 print()
-                otherProduct = input('Deseje adicionar outro produto? (s/n): ')
+                otherProduct = input('Deseja adicionar outro produto? (s/n): ')
                 if otherProduct == 's':
                     response = createNewOrder('', cpf, '', True)
                     if response:
-                        print('O produto inserido no pedido.')
+                        print('Produto inserido no pedido!')
 
         elif option == 2:
             # Opção 02 para o cancelamento do pedido.
@@ -59,14 +61,15 @@ Opção desejada: '''))
             response = verifyCustomerData(cpf, password)
 
             if response:
+                # Deleção dos arquivos de pedido e dados do usuário.
                 os.remove('./orders/order_id%d.txt' % cpf)
                 os.remove('./customer/user%d.txt' % cpf)
                 print()
-                print('Pedido cancelado com sucesso!')
+                print('Seu pedido foi cancelado.')
                 print()
             else:
                 print()
-                print('CPF ou Senha incorretos')
+                print('CPF ou Senha incorretos.\nTente novamente')
                 print()
 
         elif option == 3:   
@@ -78,6 +81,7 @@ Opção desejada: '''))
             cpf = int(input('Digite o CPF (apenas números): '))
             password = input('Digite a senha: ')
             print()
+            # Validação do CPF e Senha do usuário.
             validation = verifyCustomerData(cpf, password)
             if validation:
                 response = insertProdIntoOrder(cpf)
@@ -87,7 +91,7 @@ Opção desejada: '''))
                     print()
             else:
                 print()
-                print('CPF ou Senha inválidos.')
+                print('CPF ou Senha incorretos.\nTente novamente')
                 print()
 
         elif option == 4:
@@ -110,11 +114,11 @@ Opção desejada: '''))
                     print()
                 else:
                     print()
-                    print('Código ou Quantidade de produto inválido')
+                    print('Código do produto ou Quantidade inválida.\nTente novamente')
                     print()
             else:
                 print()
-                print('CPF ou Senha inválidos.')
+                print('CPF ou Senha incorretos.\nTente novamente')
                 print()
 
         elif option == 5:
@@ -136,7 +140,7 @@ Opção desejada: '''))
                     print()
             else:
                 print()
-                print('CPF ou Senha inválidos.')
+                print('CPF ou Senha incorretos.\nTente novamente')
                 print()
 
         elif option == 6:
@@ -151,6 +155,7 @@ Opção desejada: '''))
             validation = verifyCustomerData(cpf, password)
 
             if validation:
+                # Função para obter o extrato do pedido.
                 response = getOrderStatement(cpf)
                 if response:
                     print()
@@ -158,12 +163,13 @@ Opção desejada: '''))
                     print()
             else:
                 print()
-                print('CPF ou Senha inválidos.')
+                print('CPF ou Senha incorretos.\nTente novamente')
                 print()
 
         elif option == 0:
             print()
             print('Agredecemos por sua presença. Volte sempre!')
+            print()
             break
 
 

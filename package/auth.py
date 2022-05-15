@@ -20,8 +20,8 @@ def verifyCustomerData(cpf, pwd):
         file = open('./customer/user%d.txt' % cpf, 'r', encoding='utf-8')
         if file:
             data = file.read().split(';')
+            file.close()
             if int(data[1]) == cpf and data[2] == pwd:
-                file.close()
                 return True
             else:
                 return False

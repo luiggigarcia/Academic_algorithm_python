@@ -1,0 +1,3 @@
+4;1;Misto quente;8.0
+7;1;Suco natural;6.25;cancelado
+2;2;X-burger;10.0
